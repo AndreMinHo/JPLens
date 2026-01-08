@@ -42,7 +42,7 @@ npm install
 
 ### Cloud Deployment (Railway)
 
-1. **Deploy APIs to Railway:**
+1. **Deploy APIs to Railway: (not working still)**
    - Create Railway account at https://railway.app
    - Deploy JPLensContext: Connect `../JPLensContext` repo to Railway
    - Deploy JPLensAIContext: Connect `../JPLensAIContext` repo to Railway
