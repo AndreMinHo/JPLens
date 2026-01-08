@@ -24,6 +24,8 @@ npm install
 
 ## Usage
 
+### Local Development
+
 1. **Start the APIs:**
    - Start JPLensContext: `cd ../JPLensContext && uvicorn backend.main:app --reload`
    - Start JPLensAIContext: `cd ../JPLensAIContext && python main.py`
@@ -37,6 +39,26 @@ npm install
    - Navigate to http://localhost:3000
    - Upload an image with Japanese text
    - View the OCR results and AI analysis
+
+### Cloud Deployment (Railway)
+
+1. **Deploy APIs to Railway:**
+   - Create Railway account at https://railway.app
+   - Deploy JPLensContext: Connect `../JPLensContext` repo to Railway
+   - Deploy JPLensAIContext: Connect `../JPLensAIContext` repo to Railway
+   - Deploy JPLens Master: Connect this repo to Railway
+
+2. **Configure Environment Variables:**
+   In the JPLens Master Railway project, set:
+   ```
+   JPLENS_CONTEXT_URL=https://your-jplens-context-url.railway.app
+   JPLENS_AI_CONTEXT_URL=https://your-jplens-ai-context-url.railway.app
+   ```
+
+3. **Access the Application:**
+   - Railway will provide a public URL (e.g., `https://jplens-master.railway.app`)
+   - Works on any device with internet access
+   - No local setup required beyond API keys
 
 ## Architecture
 

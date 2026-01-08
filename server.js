@@ -5,7 +5,11 @@ const FormData = require('form-data');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+// API URLs - configurable via environment variables
+const JPLENS_CONTEXT_URL = process.env.JPLENS_CONTEXT_URL || 'http://127.0.0.1:8000';
+const JPLENS_AI_CONTEXT_URL = process.env.JPLENS_AI_CONTEXT_URL || 'http://127.0.0.1:8001';
 
 // Configure multer for file uploads
 const storage = multer.memoryStorage();
@@ -28,14 +32,14 @@ app.post('/analyze', upload.single('image'), async (req, res) => {
       contentType: req.file.mimetype
     });
 
-    const contextResponse = await axios.post('http://127.0.0.1:8000/translate-image', formData, {
+    const contextResponse = await axios.post(`${JPLENS_CONTEXT_URL}/translate-image`, formData, {
       headers: formData.getHeaders()
     });
 
     const contextData = contextResponse.data;
 
     // Step 2: Send context data to JPLensAIContext API
-    const aiResponse = await axios.post('http://127.0.0.1:8001/analyze/simple', {
+    const aiResponse = await axios.post(`${JPLENS_AI_CONTEXT_URL}/analyze/simple`, {
       ocr: contextData.ocr,
       translation: {
         raw_text: contextData.translation.raw_text,
