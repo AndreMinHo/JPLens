@@ -81,7 +81,7 @@ dist
 
 # Gatsby files
 .cache/
-public
+# public  # Commented out - we need public directory for Railway deployment
 
 # Storybook build outputs
 .out
