@@ -27,13 +27,42 @@ function ensureProtocol(url) {
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+// Authentication middleware (only active if APP_PASSWORD is set)
+function checkAuth(req, res, next) {
+  // Skip authentication if APP_PASSWORD is not set
+  if (!process.env.APP_PASSWORD) {
+    return next();
+  }
+
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Basic ')) {
+    res.set('WWW-Authenticate', 'Basic realm="JPLens"');
+    return res.status(401).send('Authentication required');
+  }
+
+  const base64Credentials = authHeader.split(' ')[1];
+  const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+  const [username, password] = credentials.split(':');
+
+  if (username === 'admin' && password === process.env.APP_PASSWORD) {
+    return next();
+  } else {
+    res.set('WWW-Authenticate', 'Basic realm="JPLens"');
+    return res.status(401).send('Authentication required');
+  }
+}
+
+// Health check (no auth required)
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+// Apply authentication to all routes
+app.use(checkAuth);
+
 // Serve static files
 app.use(express.static('public'));
-
-// Serve index.html for root route
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
 
 // API endpoint for image analysis
 app.post('/analyze', upload.single('image'), async (req, res) => {
@@ -81,11 +110,6 @@ app.post('/analyze', upload.single('image'), async (req, res) => {
       details: error.message
     });
   }
-});
-
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
 });
 
 app.listen(PORT, () => {

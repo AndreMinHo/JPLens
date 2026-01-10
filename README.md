@@ -16,6 +16,28 @@ This master application provides a user-friendly web interface to:
   - JPLensContext API (http://localhost:8000)
   - JPLensAIContext API (http://localhost:8001)
 
+## Authentication
+
+The application supports optional password authentication. Authentication is **only active when the `APP_PASSWORD` environment variable is set**.
+
+- When `APP_PASSWORD` is not set: No authentication required (works like before)
+- When `APP_PASSWORD` is set: Users will be prompted to enter credentials
+  - **Username**: `admin` (fixed)
+  - **Password**: Value of the `APP_PASSWORD` environment variable
+
+### Setting the Password
+
+**For Railway Deployment (to enable authentication):**
+1. Go to your Railway project dashboard
+2. Click on "Variables" in the project settings
+3. Add a new variable: `APP_PASSWORD` with your desired password value
+4. Redeploy the application to apply the changes
+
+**For Local Development (optional):**
+Add `APP_PASSWORD=your_password_here` to your `.env` file if you want to test authentication locally.
+
+**Note**: The `/health` endpoint remains publicly accessible for monitoring purposes without authentication.
+
 ## Installation
 
 ```bash
