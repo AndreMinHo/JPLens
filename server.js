@@ -8,13 +8,17 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // API URLs - configurable via environment variables
-const JPLENS_CONTEXT_URL = process.env.JPLENS_CONTEXT_URL ? ensureHttps(process.env.JPLENS_CONTEXT_URL) : 'http://127.0.0.1:8000';
-const JPLENS_AI_CONTEXT_URL = process.env.JPLENS_AI_CONTEXT_URL ? ensureHttps(process.env.JPLENS_AI_CONTEXT_URL) : 'http://127.0.0.1:8001';
+const JPLENS_CONTEXT_URL = process.env.JPLENS_CONTEXT_URL ? ensureProtocol(process.env.JPLENS_CONTEXT_URL) : 'http://127.0.0.1:8000';
+const JPLENS_AI_CONTEXT_URL = process.env.JPLENS_AI_CONTEXT_URL ? ensureProtocol(process.env.JPLENS_AI_CONTEXT_URL) : 'http://127.0.0.1:8001';
 
-// Helper function to ensure URLs have https protocol
-function ensureHttps(url) {
+// Helper function to ensure URLs have proper protocol
+function ensureProtocol(url) {
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
+  }
+  // Internal Railway URLs don't need https, external public URLs do
+  if (url.includes('.railway.internal')) {
+    return `http://${url}`;
   }
   return `https://${url}`;
 }
@@ -86,4 +90,7 @@ app.get('/health', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`JPLens master app running on http://localhost:${PORT}`);
+  console.log(`🔗 API URLs configured:`);
+  console.log(`   Context API: ${JPLENS_CONTEXT_URL}`);
+  console.log(`   AI Context API: ${JPLENS_AI_CONTEXT_URL}`);
 });
