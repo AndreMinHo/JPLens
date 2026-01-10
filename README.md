@@ -75,8 +75,8 @@ npm run docker:run
    
    If all services are in the same Railway project, use internal URLs:
    ```
-   JPLENS_CONTEXT_URL=http://jplenscontext.railway.internal:8000
-   JPLENS_AI_CONTEXT_URL=http://jplensaicontext.railway.internal:8001
+   JPLENS_CONTEXT_URL=http//<JPLENS_CONTEXT_NAME&PORT_HERE>
+   JPLENS_AI_CONTEXT_URL=http//<JPLENS_AI_CONTEXT_NAME&PORT_HERE>
    PORT=3000  # Usually set automatically by Railway
    ```
    
