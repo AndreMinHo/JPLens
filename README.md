@@ -1,6 +1,6 @@
 # JPLens Master Application
 
-A web application that integrates **[JPLENSCONTEXT API](https://github.com/Animenosekai/translate)** and **[JPLENSAICONTEXT API](https://github.com/AndreMinHo/JPLensAIContext)** to analyze Japanese text from images.
+A web application that integrates JPLensContext and JPLensAIContext APIs to analyze Japanese text from images.
 
 ## Overview
 
@@ -24,16 +24,37 @@ npm install
 
 ## Usage
 
-### Local Development
+### Local Development (Multiple Options)
 
+#### Option 1: Manual Setup
 1. **Start the APIs:**
    - Start JPLensContext: `cd ../JPLensContext && uvicorn backend.main:app --reload`
    - Start JPLensAIContext: `cd ../JPLensAIContext && python main.py`
 
 2. **Start the master app:**
    ```bash
-   npm start
+   npm run dev  # For development with hot reloading
+   # OR
+   npm start    # For production mode
    ```
+
+#### Option 2: Docker Compose (Recommended)
+```bash
+npm run docker:compose
+```
+This will start all three services (JPLensContext, JPLensAIContext, and Master App) in containers with proper networking.
+
+#### Option 3: Individual Docker Containers
+```bash
+# Build the master app container
+npm run docker:build
+
+# Run in development mode (with hot reloading)
+npm run docker:dev
+
+# OR run in production mode
+npm run docker:run
+```
 
 3. **Open your browser:**
    - Navigate to http://localhost:3000
@@ -42,7 +63,7 @@ npm install
 
 ### Cloud Deployment (Railway)
 
-1. **Deploy APIs to Railway: (not working still)**
+1. **Deploy APIs to Railway:**
    - Create Railway account at https://railway.app
    - Deploy JPLensContext: Connect `../JPLensContext` repo to Railway
    - Deploy JPLensAIContext: Connect `../JPLensAIContext` repo to Railway
@@ -53,9 +74,16 @@ npm install
    ```
    JPLENS_CONTEXT_URL=https://your-jplens-context-url.railway.app
    JPLENS_AI_CONTEXT_URL=https://your-jplens-ai-context-url.railway.app
+   PORT=3000  # Usually set automatically by Railway
    ```
 
-3. **Access the Application:**
+3. **Deployment Notes:**
+   - Railway will automatically detect and use railwaypack (via NIXPACKS) for Node.js deployment
+   - The `railway.json` configuration ensures proper health checks and restart policies
+   - Build and deployment typically take 2-5 minutes
+   - Note: `Dockerfile` is kept for local Docker development but Railway uses railwaypack
+
+4. **Access the Application:**
    - Railway will provide a public URL (e.g., `https://jplens-master.railway.app`)
    - Works on any device with internet access
    - No local setup required beyond API keys

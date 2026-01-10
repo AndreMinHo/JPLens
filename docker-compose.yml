@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  jplens-master:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - JPLENS_CONTEXT_URL=http://jplens-context:8000
+      - JPLENS_AI_CONTEXT_URL=http://jplens-ai-context:8001
+      - PORT=3000
+    depends_on:
+      - jplens-context
+      - jplens-ai-context
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+    networks:
+      - jplens-network
+
+  jplens-context:
+    build: ../JPLensContext
+    ports:
+      - "8000:8000"
+    networks:
+      - jplens-network
+
+  jplens-ai-context:
+    build: ../JPLensAIContext
+    ports:
+      - "8001:8001"
+    networks:
+      - jplens-network
+
+networks:
+  jplens-network:
+    driver: bridge
