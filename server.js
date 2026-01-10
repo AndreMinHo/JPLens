@@ -18,6 +18,11 @@ const upload = multer({ storage: storage });
 // Serve static files
 app.use(express.static('public'));
 
+// Serve index.html for root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // API endpoint for image analysis
 app.post('/analyze', upload.single('image'), async (req, res) => {
   try {
