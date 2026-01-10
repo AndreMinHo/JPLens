@@ -1,6 +1,6 @@
 # JPLens Master Application
 
-A web application that integrates JPLensContext and JPLensAIContext APIs to analyze Japanese text from images.
+A web application that integrates **[JPLENSCONTEXT API](https://github.com/Animenosekai/translate)** and **[JPLENSAICONTEXT API](https://github.com/AndreMinHo/JPLensAIContext)** to analyze Japanese text from images.
 
 ## Overview
 
