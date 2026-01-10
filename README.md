@@ -70,7 +70,21 @@ npm run docker:run
    - Deploy JPLens Master: Connect this repo to Railway
 
 2. **Configure Environment Variables:**
-   In the JPLens Master Railway project, set:
+   
+   **Option A: Internal URLs (Recommended for Better Performance)**
+   
+   If all services are in the same Railway project, use internal URLs:
+   ```
+   JPLENS_CONTEXT_URL=http://jplenscontext.railway.internal:8000
+   JPLENS_AI_CONTEXT_URL=http://jplensaicontext.railway.internal:8001
+   PORT=3000  # Usually set automatically by Railway
+   ```
+   
+   **IMPORTANT**: Railway internal URLs **MUST include the port number**. Check each backend service's logs to confirm what port they're listening on. Common ports: 8000, 8001, 3000, 5000, etc.
+   
+   **Option B: Public URLs (Alternative)**
+   
+   If internal URLs don't work or services are in different projects:
    ```
    JPLENS_CONTEXT_URL=https://your-jplens-context-url.railway.app
    JPLENS_AI_CONTEXT_URL=https://your-jplens-ai-context-url.railway.app
