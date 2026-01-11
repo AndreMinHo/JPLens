@@ -127,7 +127,9 @@ cancelCameraBtn.addEventListener('click', stopCamera);
 
 async function startCamera() {
     try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' }
+        });
         cameraVideo.srcObject = cameraStream;
         cameraContainer.style.display = 'block';
         cameraBtn.style.display = 'none';
