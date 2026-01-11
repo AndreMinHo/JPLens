@@ -27,6 +27,32 @@ const errorMessage = document.getElementById('errorMessage');
 imageInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
+        // Check file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/bmp'];
+        if (!allowedTypes.includes(file.type)) {
+            showError('Invalid file type. Please select a valid image file (JPEG, PNG, GIF, WebP, or BMP).');
+            imageInput.value = ''; // Clear the input
+            fileText.textContent = 'Choose an image...';
+            return;
+        }
+
+        // Check file size (10MB limit)
+        const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+        if (file.size > maxSize) {
+            showError('File size too large. Please select an image smaller than 10MB.');
+            imageInput.value = ''; // Clear the input
+            fileText.textContent = 'Choose an image...';
+            return;
+        }
+
+        // Check if file is empty
+        if (file.size === 0) {
+            showError('Empty file detected. Please select a valid image file.');
+            imageInput.value = ''; // Clear the input
+            fileText.textContent = 'Choose an image...';
+            return;
+        }
+
         fileText.textContent = file.name;
     } else {
         fileText.textContent = 'Choose an image...';

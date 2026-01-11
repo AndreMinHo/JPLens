@@ -3,6 +3,7 @@ const multer = require('multer');
 const axios = require('axios');
 const FormData = require('form-data');
 const path = require('path');
+const sharp = require('sharp');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,7 +26,82 @@ function ensureProtocol(url) {
 
 // Configure multer for file uploads
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+
+// File filter to only allow image files
+const fileFilter = (req, file, cb) => {
+  const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/bmp'];
+  if (allowedMimes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Invalid file type. Only image files are allowed.'), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  },
+  fileFilter: fileFilter
+});
+
+// Function to validate and resize image to max 500px on longest side
+async function resizeImage(buffer, mimetype) {
+  try {
+    // Check if buffer is empty
+    if (!buffer || buffer.length === 0) {
+      throw new Error('Empty file detected');
+    }
+
+    // Check if file is actually an image
+    if (!mimetype.startsWith('image/')) {
+      throw new Error('Invalid file type. Only image files are allowed.');
+    }
+
+    let sharpInstance = sharp(buffer);
+
+    // Get image metadata (this will fail for corrupted images)
+    const metadata = await sharpInstance.metadata();
+
+    // Validate image dimensions
+    if (!metadata.width || !metadata.height || metadata.width <= 0 || metadata.height <= 0) {
+      throw new Error('Invalid image dimensions');
+    }
+
+    // If image is already small enough (both dimensions <= 500), return original
+    if (metadata.width <= 500 && metadata.height <= 500) {
+      return buffer;
+    }
+
+    // Calculate new dimensions maintaining aspect ratio
+    let { width, height } = metadata;
+    if (width > height) {
+      if (width > 500) {
+        height = Math.round((height * 500) / width);
+        width = 500;
+      }
+    } else {
+      if (height > 500) {
+        width = Math.round((width * 500) / height);
+        height = 500;
+      }
+    }
+
+    // Resize and return buffer
+    const resizedBuffer = await sharpInstance
+      .resize(width, height, {
+        withoutEnlargement: true,
+        fit: 'inside'
+      })
+      .jpeg({ quality: 90 }) // Convert to JPEG for smaller size
+      .toBuffer();
+
+    return resizedBuffer;
+  } catch (error) {
+    console.error('Error processing image:', error);
+    throw new Error(`Image validation failed: ${error.message}`);
+  }
+}
 
 // Authentication middleware (only active if APP_PASSWORD is set)
 function checkAuth(req, res, next) {
@@ -64,22 +140,38 @@ app.use(checkAuth);
 // Serve static files
 app.use(express.static('public'));
 
+// Middleware to handle multer errors
+const handleMulterError = (error, req, res, next) => {
+  if (error instanceof multer.MulterError) {
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'File size too large. Maximum size is 10MB.' });
+    }
+  } else if (error.message.includes('Invalid file type')) {
+    return res.status(400).json({ error: error.message });
+  }
+  next(error);
+};
+
 // API endpoint for image analysis
-app.post('/analyze', upload.single('image'), async (req, res) => {
+app.post('/analyze', upload.single('image'), handleMulterError, async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No image file provided' });
     }
 
-    // Step 1: Send image to JPLensContext API
+    // Resize image to prevent large file processing issues
+    const resizedBuffer = await resizeImage(req.file.buffer, req.file.mimetype);
+
+    // Step 1: Send resized image to JPLensContext API
     const formData = new FormData();
-    formData.append('file', req.file.buffer, {
+    formData.append('file', resizedBuffer, {
       filename: req.file.originalname,
-      contentType: req.file.mimetype
+      contentType: 'image/jpeg' // Always JPEG after resizing
     });
 
     const contextResponse = await axios.post(`${JPLENS_CONTEXT_URL}/translate-image`, formData, {
-      headers: formData.getHeaders()
+      headers: formData.getHeaders(),
+      timeout: 30000 // 30 second timeout
     });
 
     const contextData = contextResponse.data;
@@ -91,6 +183,8 @@ app.post('/analyze', upload.single('image'), async (req, res) => {
         raw_text: contextData.translation.raw_text,
         literal: contextData.translation.translation.literal
       }
+    }, {
+      timeout: 30000 // 30 second timeout
     });
 
     // Combine results
@@ -105,8 +199,18 @@ app.post('/analyze', upload.single('image'), async (req, res) => {
 
   } catch (error) {
     console.error('Error processing image:', error);
+
+    let errorMessage = 'Failed to process image';
+    if (error.code === 'ECONNABORTED') {
+      errorMessage = 'Request timed out. The image may be too complex or the API servers are busy.';
+    } else if (error.response) {
+      errorMessage = `API Error: ${error.response.status} - ${error.response.data?.message || error.message}`;
+    } else if (error.message.includes('Image validation failed')) {
+      errorMessage = error.message.replace('Image validation failed: ', '');
+    }
+
     res.status(500).json({
-      error: 'Failed to process image',
+      error: errorMessage,
       details: error.message
     });
   }
