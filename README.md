@@ -95,26 +95,14 @@ npm run docker:run
    
    **Option A: Internal URLs (Recommended for Better Performance)**
    
-   If all services are in the same Railway project, use internal URLs with the `.railway.internal` domain:
-   
-   **Using Reference Variables (Recommended):**
+   If all services are in the same Railway project, use internal URLs:
    ```
-   JPLENS_CONTEXT_URL=http://${{jplenscontext.RAILWAY_PRIVATE_DOMAIN}}:${{jplenscontext.PORT}}
-   JPLENS_AI_CONTEXT_URL=http://${{jplensaicontext.RAILWAY_PRIVATE_DOMAIN}}:${{jplensaicontext.PORT}}
-   ```
-   
-   **Or Using Direct URLs:**
-   ```
-   JPLENS_CONTEXT_URL=http://jplenscontext.railway.internal:8000
-   JPLENS_AI_CONTEXT_URL=http://jplensaicontext.railway.internal:8001
+   JPLENS_CONTEXT_URL=http://<JPLENS_CONTEXT_INTERNAL_URL>:PORT
+   JPLENS_AI_CONTEXT_URL=http://<JPLENS_AI_CONTEXT_INTERNAL_URL>:PORT
+   PORT=3000  # Usually set automatically by Railway
    ```
    
-   **IMPORTANT Notes:**
-   - Railway internal URLs use the format: `http://servicename.railway.internal:PORT`
-   - Always use `http://` (not `https://`) for internal Railway URLs
-   - The service name matches your Railway service name (check Settings tab)
-   - Port must match what your backend service listens on (check logs)
-   - This app is configured to listen on `::` (all interfaces) for IPv4/IPv6 support
+   **IMPORTANT**: Railway internal URLs **MUST include the port number**. Check each backend service's logs to confirm what port they're listening on. Common ports: 8000, 8001, 3000, 5000, etc.
    
    **Option B: Public URLs (Alternative)**
    
@@ -122,6 +110,7 @@ npm run docker:run
    ```
    JPLENS_CONTEXT_URL=https://your-jplens-context-url.railway.app
    JPLENS_AI_CONTEXT_URL=https://your-jplens-ai-context-url.railway.app
+   PORT=3000  # Usually set automatically by Railway
    ```
 
 3. **Deployment Notes:**
@@ -129,7 +118,6 @@ npm run docker:run
    - The `railway.json` configuration ensures proper health checks and restart policies
    - Build and deployment typically take 2-5 minutes
    - Note: `Dockerfile` is kept for local Docker development but Railway uses railwaypack
-   - Server listens on `::` for both IPv4 and IPv6 support (Railway private networking best practice)
 
 4. **Access the Application:**
    - Railway will provide a public URL (e.g., `https://jplens-master.railway.app`)

@@ -112,8 +112,8 @@ app.post('/analyze', upload.single('image'), async (req, res) => {
   }
 });
 
-app.listen(PORT, "::", () => {
-  console.log(`JPLens master app running on [::]:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`JPLens master app running on http://localhost:${PORT}`);
   console.log(`🔗 API URLs configured:`);
   console.log(`   Context API: ${JPLENS_CONTEXT_URL}`);
   console.log(`   AI Context API: ${JPLENS_AI_CONTEXT_URL}`);
