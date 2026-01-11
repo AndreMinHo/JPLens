@@ -197,6 +197,15 @@ app.post('/analyze', upload.single('image'), handleMulterError, async (req, res)
   } catch (error) {
     console.error('Error processing image:', error);
 
+    // Check if the error is specifically about no Japanese text found
+    if (error.response && error.response.status === 400 && error.response.data?.detail === 'No Japanese text found in OCR data') {
+      // Return success response with flag indicating no Japanese text
+      return res.json({
+        noJapaneseText: true,
+        message: 'No Japanese text detected in the image. Please upload an image that contains Japanese text.'
+      });
+    }
+
     let errorMessage = 'Failed to process image';
     if (error.response) {
       errorMessage = `API Error: ${error.response.status} - ${error.response.data?.message || error.message}`;

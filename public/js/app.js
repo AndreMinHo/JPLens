@@ -224,6 +224,21 @@ function hideLoading() {
 
 function displayResults(data) {
     hideLoading();
+
+    // Check if no Japanese text was found
+    if (data.noJapaneseText) {
+        results.style.display = 'block';
+        // Clear existing content and show no text message
+        ocrText.textContent = '';
+        confidence.textContent = '';
+        basicTranslation.innerHTML = '';
+        aiAnalysis.innerHTML = '';
+
+        // Show message in the OCR section
+        ocrText.textContent = data.message || 'No Japanese text detected in the image. Please upload an image that contains Japanese text.';
+        return;
+    }
+
     results.style.display = 'block';
 
     // OCR Text
