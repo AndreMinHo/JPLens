@@ -170,8 +170,7 @@ app.post('/analyze', upload.single('image'), handleMulterError, async (req, res)
     });
 
     const contextResponse = await axios.post(`${JPLENS_CONTEXT_URL}/translate-image`, formData, {
-      headers: formData.getHeaders(),
-      timeout: 30000 // 30 second timeout
+      headers: formData.getHeaders()
     });
 
     const contextData = contextResponse.data;
@@ -183,8 +182,6 @@ app.post('/analyze', upload.single('image'), handleMulterError, async (req, res)
         raw_text: contextData.translation.raw_text,
         literal: contextData.translation.translation.literal
       }
-    }, {
-      timeout: 30000 // 30 second timeout
     });
 
     // Combine results
@@ -201,9 +198,7 @@ app.post('/analyze', upload.single('image'), handleMulterError, async (req, res)
     console.error('Error processing image:', error);
 
     let errorMessage = 'Failed to process image';
-    if (error.code === 'ECONNABORTED') {
-      errorMessage = 'Request timed out. The image may be too complex or the API servers are busy.';
-    } else if (error.response) {
+    if (error.response) {
       errorMessage = `API Error: ${error.response.status} - ${error.response.data?.message || error.message}`;
     } else if (error.message.includes('Image validation failed')) {
       errorMessage = error.message.replace('Image validation failed: ', '');

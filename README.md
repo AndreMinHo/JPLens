@@ -150,10 +150,9 @@ The app chains two API calls:
 
 - **Image Upload**: Drag-and-drop or click to select images (max 10MB)
 - **Automatic Image Optimization**: Images are automatically resized to max 500px on longest side for faster processing
-- **Timeout Protection**: 30-second timeout prevents hanging on complex images or busy servers
 - **Real-time Processing**: Visual feedback during analysis
 - **Comprehensive Results**: OCR text, confidence scores, translations, cultural insights
-- **Error Handling**: Clear error messages for API failures, timeouts, and oversized files
+- **Error Handling**: Clear error messages for API failures, oversized files, and invalid images
 - **Responsive Design**: Works on desktop and mobile devices
 
 ## Development
