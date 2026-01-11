@@ -201,6 +201,107 @@ button:disabled {
     margin-bottom: 10px;
 }
 
+/* Cropping Interface */
+.cropper-section {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.cropper-section h3 {
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.cropper-section p {
+    color: #666;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.cropper-container {
+    max-width: 100%;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cropper-container img {
+    max-width: 100%;
+    display: block;
+}
+
+/* Mobile touch optimizations */
+@media (max-width: 768px) {
+    .cropper-container {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        touch-action: manipulation;
+    }
+
+    /* Improve touch targets for crop handles */
+    .cropper-point,
+    .cropper-line {
+        touch-action: none;
+    }
+}
+
+.cropper-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.control-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.crop-btn, .cancel-btn {
+    padding: 16px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 48px; /* Ensure minimum touch target size */
+}
+
+.crop-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.crop-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.cancel-btn {
+    background: #f7fafc;
+    color: #4a5568;
+    border: 2px solid #e2e8f0;
+}
+
+.cancel-btn:hover {
+    background: #edf2f7;
+    border-color: #cbd5e0;
+}
+
 /* Error */
 .error {
     background: #fed7d7;
@@ -226,7 +327,25 @@ button:disabled {
     }
 
     .upload-section,
-    .results {
+    .results,
+    .cropper-section {
         padding: 20px;
+    }
+
+    .cropper-section h3 {
+        font-size: 1.5rem;
+    }
+
+    .cropper-controls {
+        gap: 15px;
+    }
+
+    .control-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .crop-btn, .cancel-btn {
+        width: 100%;
     }
 }

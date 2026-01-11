@@ -7,7 +7,11 @@ const loading = document.getElementById('loading');
 const results = document.getElementById('results');
 const errorDiv = document.getElementById('error');
 
-
+// Cropping elements
+const cropperSection = document.getElementById('cropperSection');
+const cropperImage = document.getElementById('cropperImage');
+const cropBtn = document.getElementById('cropBtn');
+const cancelCropBtn = document.getElementById('cancelCropBtn');
 
 // Result elements
 const ocrText = document.getElementById('ocrText');
@@ -16,7 +20,122 @@ const basicTranslation = document.getElementById('basicTranslation');
 const aiAnalysis = document.getElementById('aiAnalysis');
 const errorMessage = document.getElementById('errorMessage');
 
-// Update file input label when file is selected
+// Global variables
+let cropper = null;
+let selectedFile = null;
+let isCroppingActive = false;
+
+// Cropping functions
+function showCroppingInterface(file) {
+    // Create object URL for the image
+    const imageUrl = URL.createObjectURL(file);
+
+    // Set the image source
+    cropperImage.src = imageUrl;
+
+    // Show the cropping section
+    cropperSection.style.display = 'block';
+
+    // Hide upload section and other elements
+    document.querySelector('.upload-section').style.display = 'none';
+    hideLoading();
+    hideResults();
+    hideError();
+
+    // Initialize cropper when image loads
+    cropperImage.onload = () => {
+        // Destroy existing cropper if it exists
+        if (cropper) {
+            cropper.destroy();
+        }
+
+        // Check if device is mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+
+        // Initialize new cropper with mobile optimizations
+        cropper = new Cropper(cropperImage, {
+            aspectRatio: NaN, // Free cropping by default
+            viewMode: 1,
+            dragMode: 'move',
+            responsive: true,
+            restore: false,
+            checkCrossOrigin: false,
+            checkOrientation: false,
+            modal: true,
+            guides: true,
+            center: true,
+            highlight: false,
+            background: false,
+            autoCrop: true,
+            autoCropArea: isMobile ? 0.6 : 0.8, // Smaller initial crop area on mobile
+            zoomOnWheel: !isMobile, // Disable wheel zoom on mobile to prevent conflicts
+            zoomOnTouch: true,
+            cropBoxMovable: true,
+            cropBoxResizable: true,
+            toggleDragModeOnDblclick: !isMobile, // Disable double-click on mobile
+            minCropBoxWidth: isMobile ? 50 : 0, // Minimum crop box size on mobile
+            minCropBoxHeight: isMobile ? 50 : 0,
+            wheelZoomRatio: 0.1, // Slower zoom for better control
+            touchDragZoom: isMobile, // Enable touch drag zoom on mobile
+        });
+    };
+}
+
+function hideCroppingInterface() {
+    cropperSection.style.display = 'none';
+    document.querySelector('.upload-section').style.display = 'block';
+
+    // Destroy cropper and revoke object URL
+    if (cropper) {
+        cropper.destroy();
+        cropper = null;
+    }
+    if (cropperImage.src) {
+        URL.revokeObjectURL(cropperImage.src);
+        cropperImage.src = '';
+    }
+}
+
+// Event handlers for cropping controls
+cropBtn.addEventListener('click', () => {
+    if (cropper && selectedFile) {
+        // Get cropped canvas
+        const canvas = cropper.getCroppedCanvas({
+            maxWidth: 4096,
+            maxHeight: 4096,
+            fillColor: '#fff',
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high',
+        });
+
+        // Convert canvas to blob
+        canvas.toBlob((blob) => {
+            // Create a new file from the blob
+            const croppedFile = new File([blob], selectedFile.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now()
+            });
+
+            // Update the file input with the cropped image
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(croppedFile);
+            imageInput.files = dataTransfer.files;
+
+            // Hide cropping interface and show upload section
+            hideCroppingInterface();
+
+            // Auto-submit the form
+            uploadForm.dispatchEvent(new Event('submit'));
+        }, 'image/jpeg', 0.95);
+    }
+});
+
+cancelCropBtn.addEventListener('click', () => {
+    // Hide cropping interface and show upload section
+    hideCroppingInterface();
+});
+
+// Update file input label when file is selected and show cropping interface
 imageInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -46,9 +165,16 @@ imageInput.addEventListener('change', (e) => {
             return;
         }
 
+        // Store the selected file
+        selectedFile = file;
         fileText.textContent = file.name;
+
+        // Show cropping interface
+        showCroppingInterface(file);
     } else {
         fileText.textContent = 'Choose an image...';
+        selectedFile = null;
+        hideCroppingInterface();
     }
 });
 
