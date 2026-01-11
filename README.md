@@ -9,6 +9,10 @@ This master application provides a user-friendly web interface to:
 2. Extract text using OCR (JPLensContext API)
 3. Provide AI-enhanced analysis and cultural insights (JPLensAIContext API)
 
+![Preview 1](previews/preview1.jpg)
+
+![Preview 2](previews/preview2.jpg)
+
 ## Prerequisites
 
 - Node.js 16+
