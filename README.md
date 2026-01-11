@@ -17,8 +17,8 @@ This master application provides a user-friendly web interface to:
 
 - Node.js 16+
 - Running instances of:
-  - JPLensContext API (http://localhost:8000)
-  - JPLensAIContext API (http://localhost:8001)
+  - **[JPLensContext API](https://github.com/AndreMinHo/JPLensContext)**
+  - **[JPLensAIContext API](https://github.com/AndreMinHo/JPLensAIContext)**
 
 ## Authentication
 
