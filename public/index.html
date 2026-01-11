@@ -19,8 +19,16 @@
                     <div class="file-input-container">
                         <input type="file" id="imageInput" name="image" accept="image/*" required>
                         <label for="imageInput" class="file-label">
-                            <span class="file-text">Choose an image...</span>
+                            <span class="file-text">Upload an image...</span>
                         </label>
+                    </div>
+                    <button type="button" id="cameraBtn" class="camera-btn">📷</button>
+                    <div id="cameraContainer" class="camera-container" style="display: none;">
+                        <video id="cameraVideo" autoplay></video>
+                        <div class="camera-controls">
+                            <button type="button" id="captureBtn">Capture Photo</button>
+                            <button type="button" id="cancelCameraBtn">Cancel</button>
+                        </div>
                     </div>
                     <button type="submit" id="analyzeBtn">Analyze Image</button>
                 </form>

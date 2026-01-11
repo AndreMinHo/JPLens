@@ -7,6 +7,15 @@ const loading = document.getElementById('loading');
 const results = document.getElementById('results');
 const errorDiv = document.getElementById('error');
 
+// Camera elements
+const cameraBtn = document.getElementById('cameraBtn');
+const cameraContainer = document.getElementById('cameraContainer');
+const cameraVideo = document.getElementById('cameraVideo');
+const captureBtn = document.getElementById('captureBtn');
+const cancelCameraBtn = document.getElementById('cancelCameraBtn');
+
+let cameraStream = null;
+
 // Result elements
 const ocrText = document.getElementById('ocrText');
 const confidence = document.getElementById('confidence');
@@ -109,4 +118,48 @@ function showError(message) {
 
 function hideError() {
     errorDiv.style.display = 'none';
+}
+
+// Camera functionality
+cameraBtn.addEventListener('click', startCamera);
+captureBtn.addEventListener('click', capturePhoto);
+cancelCameraBtn.addEventListener('click', stopCamera);
+
+async function startCamera() {
+    try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        cameraVideo.srcObject = cameraStream;
+        cameraContainer.style.display = 'block';
+        cameraBtn.style.display = 'none';
+    } catch (error) {
+        console.error('Error accessing camera:', error);
+        showError('Unable to access camera. Please check permissions and try again.');
+    }
+}
+
+function stopCamera() {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+    }
+    cameraVideo.srcObject = null;
+    cameraContainer.style.display = 'none';
+    cameraBtn.style.display = 'block';
+}
+
+function capturePhoto() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = cameraVideo.videoWidth;
+    canvas.height = cameraVideo.videoHeight;
+    ctx.drawImage(cameraVideo, 0, 0);
+
+    canvas.toBlob((blob) => {
+        const file = new File([blob], 'captured-photo.png', { type: 'image/png' });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        imageInput.files = dataTransfer.files;
+        fileText.textContent = 'Captured photo';
+        stopCamera();
+    }, 'image/png');
 }

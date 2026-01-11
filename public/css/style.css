@@ -72,6 +72,7 @@ header p {
     cursor: pointer;
     transition: all 0.3s ease;
     min-height: 80px;
+    position: relative;
 }
 
 .file-label:hover {
@@ -82,6 +83,52 @@ header p {
 .file-text {
     color: #666;
     font-size: 1.1rem;
+}
+
+.camera-btn {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    color: #666;
+    font-size: 2.2rem;
+    font-weight: normal;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    margin-bottom: 40px;
+    text-align: center;
+    min-height: 80px;
+}
+
+.camera-btn:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+    color: #333;
+}
+
+.camera-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#cameraVideo {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+}
+
+.camera-controls {
+    margin-top: 15px;
+}
+
+.camera-controls button {
+    margin: 0 10px;
+    width: auto;
+    padding: 10px 20px;
 }
 
 /* Button */
