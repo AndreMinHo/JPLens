@@ -24,6 +24,10 @@
                         </label>
                     </div>
 
+                    <div class="upload-options">
+                        <button type="button" id="cameraBtn" class="camera-btn">📷 Take Photo</button>
+                    </div>
+
                     <button type="submit" id="analyzeBtn">Analyze Image</button>
                 </form>
             </div>
@@ -41,6 +45,24 @@
                     <div class="control-buttons">
                         <button id="cropBtn" class="crop-btn">Crop & Analyze</button>
                         <button id="cancelCropBtn" class="cancel-btn">Use Full Image</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Interface -->
+            <div id="cameraSection" class="camera-section" style="display: none;">
+                <h3>Take a Photo</h3>
+                <p>Position your camera to capture Japanese text</p>
+
+                <div class="camera-container">
+                    <video id="cameraVideo" autoplay playsinline muted></video>
+                    <canvas id="cameraCanvas" style="display: none;"></canvas>
+                </div>
+
+                <div class="camera-controls">
+                    <div class="control-buttons">
+                        <button id="captureBtn" class="capture-btn">📸 Capture</button>
+                        <button id="cancelCameraBtn" class="cancel-btn">Cancel</button>
                     </div>
                 </div>
             </div>

@@ -5,7 +5,7 @@ A web application that integrates **[JPLensContext](https://github.com/AndreMinH
 ## Overview
 
 This application provides a user-friendly web interface to:
-1. Upload images containing Japanese text
+1. Upload images containing Japanese text or capture photos directly with your camera
 2. Extract text using OCR (JPLensContext API)
 3. Provide AI-enhanced analysis and cultural insights (JPLensAIContext API)
 

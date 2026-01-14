@@ -13,6 +13,14 @@ const cropperImage = document.getElementById('cropperImage');
 const cropBtn = document.getElementById('cropBtn');
 const cancelCropBtn = document.getElementById('cancelCropBtn');
 
+// Camera elements
+const cameraBtn = document.getElementById('cameraBtn');
+const cameraSection = document.getElementById('cameraSection');
+const cameraVideo = document.getElementById('cameraVideo');
+const cameraCanvas = document.getElementById('cameraCanvas');
+const captureBtn = document.getElementById('captureBtn');
+const cancelCameraBtn = document.getElementById('cancelCameraBtn');
+
 // Result elements
 const ocrText = document.getElementById('ocrText');
 const confidence = document.getElementById('confidence');
@@ -133,6 +141,107 @@ cropBtn.addEventListener('click', () => {
 cancelCropBtn.addEventListener('click', () => {
     // Hide cropping interface and show upload section
     hideCroppingInterface();
+});
+
+// Camera functions
+let cameraStream = null;
+
+function showCameraInterface() {
+    cameraSection.style.display = 'block';
+    document.querySelector('.upload-section').style.display = 'none';
+    hideLoading();
+    hideResults();
+    hideError();
+
+    // Start camera
+    startCamera();
+}
+
+function hideCameraInterface() {
+    cameraSection.style.display = 'none';
+    document.querySelector('.upload-section').style.display = 'block';
+
+    // Stop camera stream
+    stopCamera();
+}
+
+async function startCamera() {
+    try {
+        const constraints = {
+            video: {
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+                facingMode: 'environment' // Prefer back camera on mobile
+            }
+        };
+
+        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+        cameraVideo.srcObject = cameraStream;
+
+        // Wait for video to load
+        await new Promise((resolve) => {
+            cameraVideo.onloadedmetadata = resolve;
+        });
+
+    } catch (error) {
+        console.error('Error accessing camera:', error);
+        showError('Unable to access camera. Please check permissions and try again.');
+        hideCameraInterface();
+    }
+}
+
+function stopCamera() {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+        cameraVideo.srcObject = null;
+    }
+}
+
+function capturePhoto() {
+    const canvas = cameraCanvas;
+    const video = cameraVideo;
+    const context = canvas.getContext('2d');
+
+    // Set canvas size to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw current video frame to canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert canvas to blob
+    canvas.toBlob((blob) => {
+        // Create a file from the blob
+        const capturedFile = new File([blob], 'camera-capture.jpg', {
+            type: 'image/jpeg',
+            lastModified: Date.now()
+        });
+
+        // Stop camera and hide interface
+        stopCamera();
+        hideCameraInterface();
+
+        // Treat captured image like an uploaded file
+        selectedFile = capturedFile;
+        fileText.textContent = capturedFile.name;
+
+        // Show cropping interface
+        showCroppingInterface(capturedFile);
+    }, 'image/jpeg', 0.95);
+}
+
+// Camera event handlers
+cameraBtn.addEventListener('click', () => {
+    showCameraInterface();
+});
+
+captureBtn.addEventListener('click', () => {
+    capturePhoto();
+});
+
+cancelCameraBtn.addEventListener('click', () => {
+    hideCameraInterface();
 });
 
 // Update file input label when file is selected and show cropping interface

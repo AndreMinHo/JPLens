@@ -85,7 +85,26 @@ header p {
     font-size: 1.1rem;
 }
 
+.upload-options {
+    margin-bottom: 20px;
+}
 
+.camera-btn {
+    background: #f7fafc;
+    color: #4a5568;
+    border: 2px solid #e2e8f0;
+    font-size: 1rem;
+    padding: 10px 20px;
+    width: auto;
+    margin: 0 auto;
+    display: block;
+}
+
+.camera-btn:hover {
+    background: #edf2f7;
+    border-color: #cbd5e0;
+    transform: none;
+}
 
 /* Button */
 button {
@@ -237,6 +256,51 @@ button:disabled {
     display: block;
 }
 
+/* Camera Interface */
+.camera-section {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.camera-section h3 {
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.camera-section p {
+    color: #666;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.camera-container {
+    max-width: 100%;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+
+.camera-container video {
+    max-width: 100%;
+    display: block;
+    background: #000;
+}
+
+.camera-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
 /* Mobile touch optimizations */
 @media (max-width: 768px) {
     .cropper-container {
@@ -300,6 +364,24 @@ button:disabled {
 .cancel-btn:hover {
     background: #edf2f7;
     border-color: #cbd5e0;
+}
+
+.capture-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 48px;
+}
+
+.capture-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 /* Error */
